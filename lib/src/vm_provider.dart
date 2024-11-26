@@ -1,20 +1,16 @@
-import 'package:provider/provider.dart';
+part of flutter_arch_project;
 
-import 'icontroller.dart';
-import 'view_model.dart';
-
-class VMProvider<P extends ViewModel> extends ChangeNotifierProvider<P> {
+class VMProvider<P extends ViewModel> extends BlocProvider<P> {
 
   VMProvider({
     super.key,
     super.child,
     required Create<P> create,
-    super.builder,
     super.lazy,
   }) : super(
     create: (context){
       return context.read<IController>()
-          .addVM(create(context), key) as P;
+          ._addVM(create(context), key) as P;
     },
   );
 

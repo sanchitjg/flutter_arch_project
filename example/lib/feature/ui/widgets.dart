@@ -1,7 +1,9 @@
 import 'package:example/app_cache_state/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_arch_project/flutter_arch_project.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart' as p;
+
 
 import '../state/a_repo.dart';
 import '../state/b_controller.dart';
@@ -13,21 +15,21 @@ class MyAppState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return p.MultiProvider(
       providers: [
-        Provider<AppState>(
+        p.Provider<AppState>(
           create: (context){
             return AppState();
           },
         ),
-        Provider<IAppRepository>(
+        p.Provider<IAppRepository>(
           create: (context){
             return AppRepository(
-              webSockets: {MockSocket()},
+              ws: MockSocket(),
             );
           },
         ),
-        Provider<AppController>(
+        p.Provider<AppController>(
           create: (context){
             return AppController(
               repositories: {context.read<AppRepository>()},
@@ -36,6 +38,7 @@ class MyAppState extends StatelessWidget {
           },
         ),
       ],
+      child: const MyApp(),
     );
   }
 }
@@ -63,33 +66,32 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return VMProvider(
+    return BlocProvider(
       create: (context){
         return MyHomePageVM();
       },
-      builder: (context, _) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Selector<MyHomePageVM, String>(
-              selector: (context, vm) => vm.title.get(),
-              builder: (context, title, _) {
-                return Text(title);
-              },
-            ),
-          ),
-          body: Provider<MyHomePageBodyVM>(
-            create: (context) {
-              return MyHomePageBodyVM();
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: BlocBuilder<MyHomePageVM, TitleState>(
+            builder: (context, title) {
+              return Text(title.title);
             },
-            builder: (context, _) {
+          ),
+        ),
+        body: VMProvider<MyHomePageBodyVM>(
+          create: (context) {
+            return MyHomePageBodyVM();
+          },
+          child: Builder(
+            builder: (context) {
 
               final description = context.select<MyHomePageBodyVM, String>(
-                    (vm) => vm.description.get(),
+                    (vm) => vm.state.description,
               );
 
               final counter = context.select<MyHomePageBodyVM, int>(
-                    (vm) => vm.counter.get(),
+                    (vm) => vm.state.counter,
               );
 
               return Center(
@@ -108,13 +110,13 @@ class MyHomePage extends StatelessWidget {
               );
             },
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: context.read<AppController>().incrementCounter,
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
-        );
-      },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: context.read<AppController>().incrementCounter,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ),
+      ),
     );
   }
 }

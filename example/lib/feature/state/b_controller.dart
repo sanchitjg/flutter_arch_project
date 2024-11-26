@@ -10,39 +10,63 @@ class AppController extends IController {
 
   StreamSubscription<AppStateType>? _counterCacheSub;
 
+  late final appState = cache<AppState>();
+  late final appRepo = repo<IAppRepository>();
+
   AppController({super.repositories, super.caches}){
 
-    _counterCacheSub ??= cache<AppState>()?.subscribe((appState){
-      switch(appState) {
-        case AppStateType.counter:
-          vm<MyHomePageBodyVM>()?.counter.set(cache<AppState>()?.counter ?? 0);
+    _counterCacheSub ??= appState?.subscribe((appStateChange){
+      switch(appStateChange) {
+        case CounterStateChange():
+          addEvent(SetCount(appState?.counter ?? 0));
           break;
         default:
           break;
       }
     });
 
-    repo<IAppRepository>()?.getCounter().then((value) {
-      vm<MyHomePageBodyVM>()?.counter.set(value ?? 0);
-      cache<AppState>()?.setCounter(value ?? 0);
-    });
-    repo<IAppRepository>()?.getCounters()?.then((value) {
-      vm<MyHomePageBodyVM>()?.counter.set(value.firstOrNull ?? 0);
-      cache<AppState>()?.setCounter(value.firstOrNull ?? 0);
-    });
+    final value = appRepo?.getCounter();
+    addEvent(SetCount(value ?? 0));
+    appState?.setCounter(value ?? 0);
+    appRepo?.getCounters();
   }
 
   void incrementCounter() {
-    vm<MyHomePageBodyVM>()
-        ?.counter
-        .set((vm<MyHomePageBodyVM>()?.counter.get() ?? 0) + 1);
-    repo<IAppRepository>()
-        ?.setCounter(vm<MyHomePageBodyVM>()?.counter.get() ?? 0);
+    addEvent(Increment());
+    appRepo?.setCounter(vm<MyHomePageBodyVM>()?.state.counter ?? 0);
   }
 
+  @override
   void dispose(){
     _counterCacheSub?.cancel();
     _counterCacheSub = null;
+    super.dispose();
+  }
+
+  @override
+  void onSocketData(ResponseModel message) {
+    switch(message) {
+      case PongModel():
+        vm<MyHomePageBodyVM>()?.add(SetCount(0));
+        appState?.setCounter(0);
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  void onRegisterViewModel(ViewModel model) {
+    switch(model) {
+      case MyHomePageVM():
+        model.add(TitleEvent('${model.state.title}: Arch Project Example'));
+        break;
+      case MyHomePageBodyVM():
+        model.add(SetCount(appState?.counter ?? 0));
+        break;
+      default:
+        break;
+    }
   }
 
 }

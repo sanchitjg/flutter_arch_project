@@ -1,28 +1,25 @@
-import 'package:flutter/foundation.dart';
+part of flutter_arch_project;
 
-import 'ihttp.dart';
-import 'ilocalstore.dart';
-import 'iwebsocket.dart';
+class _DefaultLocalStorage with LocalStoreBase {}
 
-class _DefaultLocalStorage extends ILocalStorage {}
+abstract class IRepository<M extends ResponseModel> extends BaseRepository {
+  final IWebSocket? _ws;
 
-abstract class IRepository {
-  final Map<Type, IWebSocket> _webSockets;
-  final Map<Type, IHttp> _httpCons;
+  LocalStoreBase get localStore => _DefaultLocalStorage();
 
-  ILocalStorage get localStore => _DefaultLocalStorage();
+  IRepository({IWebSocket? ws, super.onAuthTokenExpired}) : _ws = ws;
 
-  IRepository({final Set<IWebSocket> webSockets = const <IWebSocket>{}, final http = const <IHttp>{}})
-      :  _webSockets = webSockets.toList().asMap().map((key, value) => MapEntry(value.runtimeType, value)),
-        _httpCons = http.toList().asMap().map((key, value) => MapEntry(value.runtimeType, value));
-
-  @protected
-  T? socket<T extends IWebSocket>() {
-    return _webSockets[T] as T?;
+  Stream<M>? _stream() {
+    return _ws
+        ?.getIncomingMessageStream()
+        .map((m) => mapTypeToResponse[m['type']]?.call(m))
+        .where((m) => m is M)
+        .cast<M>();
   }
 
-  @protected
-  T? http<T extends IHttp>() {
-    return _httpCons[T] as T?;
+  bool sendMessage(RequestModel message) {
+    return (_ws?..sendMessage(message.toJson())) != null;
   }
+
+  Map<String, ResponseModel Function(Map<String, dynamic>)> get mapTypeToResponse;
 }

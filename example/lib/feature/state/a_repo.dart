@@ -4,64 +4,69 @@ import 'package:flutter_arch_project/flutter_arch_project.dart';
 
 import '../../app_local_store/app_local_store.dart';
 
-class AppRepository extends IRepository implements IAppRepository {
+class AppRepository extends IAppRepository<PongModel> {
 
-  AppRepository({super.webSockets});
-
-  @override
-  final ILocalStorage localStore = AppLocalStore();
+  AppRepository({super.ws});
 
   @override
-  Future<List<int>>? getCounters() {
-    return socket<MockSocket>()?.stream<PongModel, List<int>>(PingModel(), (event) => <int>[]).first;
+  final localStore = AppLocalStore();
+
+  @override
+  bool getCounters() {
+    return sendMessage(PingModel());
   }
 
   @override
-  Stream<List<int>>? subscribeCounters() {
-    return socket<MockSocket>()?.stream<PongModel, List<int>>(PingModel(), (event) => <int>[]);
+  bool unsubscribeCounters() {
+    return sendMessage(PingModel());
   }
 
   @override
-  Future<bool>? unsubscribeCounters() {
-    return socket<MockSocket>()?.stream<PongModel, bool>(PingModel(), (event) => true).first;
+  void setCounter(int count) {
+    localStore.saveInt('counter', count);
   }
 
   @override
-  Future<void> setCounter(int count) {
-    return localStore.saveToLocalStorage('counter', count.toString());
+  int? getCounter() {
+    return localStore.getInt('counter');
   }
-
-  @override
-  Future<int?> getCounter() async {
-    return int.tryParse(await localStore.getFromLocalStorage('counter') ?? '');
-  }
-}
-
-abstract class IAppRepository extends IRepository {
-  Future<List<int>>? getCounters();
-  Stream<List<int>>? subscribeCounters();
-  Future<bool>? unsubscribeCounters();
-
-  Future<void> setCounter(int counter);
-
-  Future<int?> getCounter();
-}
-
-class MockSocket extends IWebSocket {
-
-  static final _mockSocketController = StreamController<Map<String, dynamic>>.broadcast();
 
   @override
   final mapTypeToResponse = <String, ResponseModel Function(Map<String,dynamic>)>{
     PingModel.responseType: (_) => PongModel.fromJson(),
   };
 
-  MockSocket() : super(_mockSocketController.add, _mockSocketController.stream
-      .map((event) => {'type': PingModel.responseType}));
+  @override
+  void dispose() {}
+}
+
+abstract interface class IAppRepository<R extends ResponseModel> extends IRepository<R> {
+
+  IAppRepository({super.ws});
+
+  bool getCounters();
+
+  bool unsubscribeCounters();
+
+  void setCounter(int counter);
+
+  int? getCounter();
+}
+
+class MockSocket implements IWebSocket {
+
+  static final _mockSocketController = StreamController<Map<String, dynamic>>.broadcast();
 
   void dispose(){
     _mockSocketController.close();
   }
+
+  @override
+  void sendMessage(Map<String, dynamic> msg)  => _mockSocketController.add(msg);
+
+  @override
+  Stream<Map<String, dynamic>> getIncomingMessageStream() => _mockSocketController.stream
+      .map((event) => {'type': PingModel.responseType});
 }
 
 

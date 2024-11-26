@@ -7,10 +7,13 @@ class AppState extends ICacheState<AppStateType> {
 
   void setCounter(int value) {
     _counter = value;
-    notifyListeners(AppStateType.counter);
+    notifyListeners(CounterStateChange(counter));
   }
 }
 
-enum AppStateType {
-  counter;
+abstract class AppStateType {}
+
+class CounterStateChange extends AppStateType {
+  final int counter;
+  CounterStateChange(this.counter);
 }

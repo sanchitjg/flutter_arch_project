@@ -1,22 +1,35 @@
-import 'package:flutter/foundation.dart';
+part of flutter_arch_project;
 
-abstract class ViewModel extends ChangeNotifier {
+abstract class ViewModelEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-  bool _disposed = false;
+abstract class ViewModelState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-  bool get isDisposed => _disposed;
+abstract class ViewModel<E extends ViewModelEvent, S extends ViewModelState> extends Bloc<E, S> {
+
+  ViewModel(super.initialState){
+    on<E>((event, emit) {
+      onEventStateChange(event).forEach(emit);
+    });
+  }
 
   @override
   @mustCallSuper
   @protected
-  void dispose() {
-    _disposed = true;
-    super.dispose();
+  Future<void> close() {
+    return super.close();
   }
 
-  void notify() {
-    if(!_disposed) {
-      notifyListeners();
+  Stream<S> onEventStateChange(E event);
+
+  void _addEvent(ViewModelEvent event) {
+    if(!isClosed && event is E) {
+      super.add(event);
     }
   }
 }

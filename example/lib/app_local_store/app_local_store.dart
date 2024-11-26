@@ -1,3 +1,3 @@
-import 'package:flutter_arch_project/flutter_arch_project.dart';
+import 'package:rummy_building_blocks/rummy_building_blocks.dart';
 
-class AppLocalStore extends ILocalStorage {}
+class AppLocalStore with LocalStoreBase {}
