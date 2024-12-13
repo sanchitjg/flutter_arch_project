@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter_arch_project/flutter_arch_project.dart';
 
-abstract class CounterEvent extends ViewModelEvent {}
+abstract class CounterEvent extends JGBlocEvent {}
 
 class Increment extends CounterEvent {}
 
@@ -15,7 +15,7 @@ class SetCount extends CounterEvent {
   List<Object?> get props => [count];
 }
 
-class CounterState extends ViewModelState {
+class CounterState extends JGBlocState {
   final int counter;
 
   final String description = 'You have pushed the button this many times:';
@@ -26,7 +26,7 @@ class CounterState extends ViewModelState {
   List<Object?> get props => [counter];
 }
 
-class MyHomePageBodyVM extends ViewModel<CounterEvent, CounterState> {
+class MyHomePageBodyVM extends JGBloc<CounterEvent, CounterState> {
 
   MyHomePageBodyVM() : super(CounterState(0)){}
 
@@ -43,7 +43,7 @@ class MyHomePageBodyVM extends ViewModel<CounterEvent, CounterState> {
   }
 }
 
-class TitleEvent extends ViewModelEvent {
+class TitleEvent extends JGBlocEvent {
   final String title;
 
   TitleEvent(this.title);
@@ -52,7 +52,7 @@ class TitleEvent extends ViewModelEvent {
   List<Object?> get props => [title];
 }
 
-class TitleState extends ViewModelState {
+class TitleState extends JGBlocState {
   final String title;
 
   TitleState(this.title);
@@ -61,7 +61,7 @@ class TitleState extends ViewModelState {
   List<Object?> get props => [title];
 }
 
-class MyHomePageVM extends ViewModel<TitleEvent, TitleState> {
+class MyHomePageVM extends JGBloc<TitleEvent, TitleState> {
   MyHomePageVM() : super(TitleState('Counter App'));
 
   @override

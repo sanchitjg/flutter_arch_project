@@ -7,20 +7,20 @@ abstract class GenericModel {
   GenericModel._request(String? type) : _type = type;
 }
 
-abstract class RequestModel extends GenericModel {
+abstract class JGBaseRequestModel extends GenericModel {
 
   static String? get responseType => null;
 
-  RequestModel({String? type}) : super._request(type);
+  JGBaseRequestModel({String? type}) : super._request(type);
 
   Map<String, dynamic>? get mapJson => null;
 
   Map<String, dynamic> toJson() => {'type': _type, ...?mapJson};
 }
 
-abstract class ResponseModel extends GenericModel {
+abstract class JGBaseResponseModel extends GenericModel {
 
   static String? get requestType => null;
 
-  ResponseModel(Map<String, dynamic> json) : super._response(json);
+  JGBaseResponseModel(super.json) : super._response();
 }

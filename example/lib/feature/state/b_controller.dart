@@ -33,7 +33,7 @@ class AppController extends IController {
 
   void incrementCounter() {
     addEvent(Increment());
-    appRepo?.setCounter(vm<MyHomePageBodyVM>()?.state.counter ?? 0);
+    appRepo?.setCounter(bloc<MyHomePageBodyVM>()?.state.counter ?? 0);
   }
 
   @override
@@ -44,10 +44,10 @@ class AppController extends IController {
   }
 
   @override
-  void onSocketData(ResponseModel message) {
+  void onSocketData(JGBaseResponseModel message) {
     switch(message) {
       case PongModel():
-        vm<MyHomePageBodyVM>()?.add(SetCount(0));
+        bloc<MyHomePageBodyVM>()?.add(SetCount(0));
         appState?.setCounter(0);
         break;
       default:
@@ -56,7 +56,7 @@ class AppController extends IController {
   }
 
   @override
-  void onRegisterViewModel(ViewModel model) {
+  void onRegisterBlocWithController(JGBloc model) {
     switch(model) {
       case MyHomePageVM():
         model.add(TitleEvent('${model.state.title}: Arch Project Example'));

@@ -2,7 +2,7 @@ part of flutter_arch_project;
 
 class _DefaultLocalStorage with LocalStoreBase {}
 
-abstract class IRepository<M extends ResponseModel> extends BaseRepository {
+abstract class IRepository<M extends JGBaseResponseModel> extends BaseRepository {
   final IWebSocket? _ws;
 
   LocalStoreBase get localStore => _DefaultLocalStorage();
@@ -17,9 +17,9 @@ abstract class IRepository<M extends ResponseModel> extends BaseRepository {
         .cast<M>();
   }
 
-  bool sendMessage(RequestModel message) {
+  bool sendMessage(JGBaseRequestModel message) {
     return (_ws?..sendMessage(message.toJson())) != null;
   }
 
-  Map<String, ResponseModel Function(Map<String, dynamic>)> get mapTypeToResponse;
+  Map<String, JGBaseResponseModel Function(Map<String, dynamic>)> get mapTypeToResponse;
 }

@@ -79,7 +79,7 @@ class MyHomePage extends StatelessWidget {
             },
           ),
         ),
-        body: VMProvider<MyHomePageBodyVM>(
+        body: JGBlocProvider<MyHomePageBodyVM>(
           create: (context) {
             return MyHomePageBodyVM();
           },

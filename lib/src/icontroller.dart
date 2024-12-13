@@ -10,15 +10,15 @@ abstract class IController {
   final Map<Type, ICacheState> _caches;
 
   /// A subscription to the merged stream of response models from all repositories.
-  late final StreamSubscription<ResponseModel> _socketSubscription = StreamGroup.mergeBroadcast(_repositories.values
+  late final StreamSubscription<JGBaseResponseModel> _socketSubscription = StreamGroup.mergeBroadcast(_repositories.values
       .map((repo) => repo._stream())
-      .whereType<Stream<ResponseModel>>()).listen(onSocketData);
+      .whereType<Stream<JGBaseResponseModel>>()).listen(onSocketData);
 
   /// A map of view model types to their instances.
-  final _viewModels = <Type, ViewModel>{};
+  final _blocs = <Type, JGBloc>{};
 
   /// A map of view model types to their keyed instances.
-  final _viewModelLists = <Type, Map<Key, ViewModel>>{};
+  final _blocLists = <Type, Map<Key, JGBloc>>{};
 
   /// Constructs an [IController] with the given repositories and caches.
   ///
@@ -47,15 +47,15 @@ abstract class IController {
   /// Adds a view model to the controller.
   ///
   /// [T] The type of the view model to add.
-  /// [vm] The view model instance to add.
+  /// [bloc] The view model instance to add.
   /// [key] An optional key to associate with the view model.
   /// Returns the added view model instance.
-  T _addVM<T extends ViewModel>(ViewModel vm, [Key? key]) {
-    onRegisterViewModel(vm);
+  T _addBlocToController<T extends JGBloc>(JGBloc bloc, [Key? key]) {
+    onRegisterBlocWithController(bloc);
     if(key == null) {
-      return _viewModels[T] = vm as T;
+      return _blocs[T] = bloc as T;
     }
-    return (_viewModelLists[T] ??= {})[key] = vm as T;
+    return (_blocLists[T] ??= {})[key] = bloc as T;
   }
 
   /// Retrieves a view model of the specified type.
@@ -63,29 +63,29 @@ abstract class IController {
   /// [T] The type of the view model to retrieve.
   /// [key] An optional key to identify the view model.
   /// Returns the view model instance if found and not closed, otherwise null.
-  T? vm<T extends ViewModel>([Key? key]) {
+  T? bloc<T extends JGBloc>([Key? key]) {
     if(key == null) {
-      if(_viewModels[T]?.isClosed == true) {
+      if(_blocs[T]?.isClosed == true) {
         return null;
       }
-      return _viewModels[T] as T?;
+      return _blocs[T] as T?;
     }
-    if(_viewModelLists[T]?[key]?.isClosed == true) {
+    if(_blocLists[T]?[key]?.isClosed == true) {
       return null;
     }
-    return _viewModelLists[T]?[key] as T?;
+    return _blocLists[T]?[key] as T?;
   }
 
   /// Adds an event to all view models managed by the controller.
   ///
   /// [event] The event to add to the view models.
-  void addEvent(ViewModelEvent event) {
-    _viewModels.forEach((_, value) {
+  void addEvent(JGBlocEvent event) {
+    _blocs.forEach((_, value) {
       value._addEvent(event);
     });
-    _viewModelLists.forEach((_, value) {
-      value.forEach((_, vm) {
-        vm._addEvent(event);
+    _blocLists.forEach((_, value) {
+      value.forEach((_, bloc) {
+        bloc._addEvent(event);
       });
     });
   }
@@ -93,12 +93,12 @@ abstract class IController {
   /// Handles incoming socket data.
   ///
   /// [message] The response model received from the socket.
-  void onSocketData(ResponseModel message);
+  void onSocketData(JGBaseResponseModel message);
 
   /// Called when a view model is registered with the controller.
   ///
-  /// [model] The view model that is being registered.
-  void onRegisterViewModel(ViewModel model);
+  /// [bloc] The view model that is being registered.
+  void onRegisterBlocWithController(JGBloc bloc);
 
   /// Disposes the controller by canceling the socket subscription.
   void dispose(){

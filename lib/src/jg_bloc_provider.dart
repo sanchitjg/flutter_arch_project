@@ -1,8 +1,8 @@
 part of flutter_arch_project;
 
-class VMProvider<P extends ViewModel> extends BlocProvider<P> {
+class JGBlocProvider<P extends JGBloc> extends BlocProvider<P> {
 
-  VMProvider({
+  JGBlocProvider({
     super.key,
     super.child,
     required Create<P> create,
@@ -10,7 +10,7 @@ class VMProvider<P extends ViewModel> extends BlocProvider<P> {
   }) : super(
     create: (context){
       return context.read<IController>()
-          ._addVM(create(context), key) as P;
+          ._addBlocToController(create(context), key) as P;
     },
   );
 

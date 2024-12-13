@@ -1,5 +1,8 @@
 library flutter_arch_project;
 
+export 'package:flutter_bloc/flutter_bloc.dart';
+export 'package:jg_network/network_main.dart';
+
 import 'dart:async';
 
 import 'package:async/async.dart';
@@ -16,4 +19,6 @@ part 'src/iwebsocket.dart';
 part 'src/models.dart';
 part 'src/irepository.dart';
 part 'src/view_model.dart';
-part 'src/vm_provider.dart';
+part 'src/jg_bloc_provider.dart';
+part 'src/jg_dependency_provider.dart';
+part 'src/jg_multi_provider.dart';

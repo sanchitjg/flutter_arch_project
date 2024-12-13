@@ -32,7 +32,7 @@ class AppRepository extends IAppRepository<PongModel> {
   }
 
   @override
-  final mapTypeToResponse = <String, ResponseModel Function(Map<String,dynamic>)>{
+  final mapTypeToResponse = <String, JGBaseResponseModel Function(Map<String,dynamic>)>{
     PingModel.responseType: (_) => PongModel.fromJson(),
   };
 
@@ -40,7 +40,7 @@ class AppRepository extends IAppRepository<PongModel> {
   void dispose() {}
 }
 
-abstract interface class IAppRepository<R extends ResponseModel> extends IRepository<R> {
+abstract interface class IAppRepository<R extends JGBaseResponseModel> extends IRepository<R> {
 
   IAppRepository({super.ws});
 
@@ -70,14 +70,14 @@ class MockSocket implements IWebSocket {
 }
 
 
-final class PingModel extends RequestModel {
+final class PingModel extends JGBaseRequestModel {
 
   static String get responseType => 'pong';
 
   PingModel() : super(type: 'ping');
 }
 
-final class PongModel extends ResponseModel {
+final class PongModel extends JGBaseResponseModel {
 
   static String get requestType => 'ping';
 

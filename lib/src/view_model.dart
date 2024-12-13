@@ -1,18 +1,18 @@
 part of flutter_arch_project;
 
-abstract class ViewModelEvent extends Equatable {
+abstract class JGBlocEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-abstract class ViewModelState extends Equatable {
+abstract class JGBlocState extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-abstract class ViewModel<E extends ViewModelEvent, S extends ViewModelState> extends Bloc<E, S> {
+abstract class JGBloc<E extends JGBlocEvent, S extends JGBlocState> extends Bloc<E, S> {
 
-  ViewModel(super.initialState){
+  JGBloc(super.initialState){
     on<E>((event, emit) {
       onEventStateChange(event).forEach(emit);
     });
@@ -27,7 +27,7 @@ abstract class ViewModel<E extends ViewModelEvent, S extends ViewModelState> ext
 
   Stream<S> onEventStateChange(E event);
 
-  void _addEvent(ViewModelEvent event) {
+  void _addEvent(JGBlocEvent event) {
     if(!isClosed && event is E) {
       super.add(event);
     }
