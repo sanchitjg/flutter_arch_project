@@ -1,6 +1,6 @@
 part of flutter_arch_project;
 
-class _DefaultLocalStorage with LocalStoreBase {}
+class _DefaultLocalStorage extends LocalStoreBase {}
 
 abstract class IRepository<M extends JGBaseResponseModel> extends BaseRepository {
   final IWebSocket? _ws;
