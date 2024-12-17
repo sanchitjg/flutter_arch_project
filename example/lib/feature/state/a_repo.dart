@@ -2,23 +2,43 @@ import 'dart:async';
 
 import 'package:flutter_arch_project/flutter_arch_project.dart';
 
+import '../../app_cache_state/app_state.dart';
 import '../../app_local_store/app_local_store.dart';
 
-class AppRepository extends IAppRepository<PongModel> {
+class AppRepository
+    extends IAppRepository
+    with WebSocketMixin<PongModel>,
+        CacheStateMixin,
+        LocalStoreMixin,
+        HttpMixin {
 
-  AppRepository({super.ws});
+  @override
+  final IWebSocket ws;
+
+  @override
+  final Map<Type, ICacheState<IRepoModel>> caches;
+
+  @override
+  final http = MockHttp();
 
   @override
   final localStore = AppLocalStore();
 
-  @override
-  bool getCounters() {
-    return sendMessage(PingModel());
+  AppState? get appState => cache<AppState>();
+
+  AppRepository({required this.ws, Set<ICacheState<IRepoModel>>? caches})
+    : caches = caches?.toTypeMap() ?? Set<ICacheState<IRepoModel>>.identity().toTypeMap() {
+    mergeStream({socketStream(), cacheStream()});
   }
 
   @override
-  bool unsubscribeCounters() {
-    return sendMessage(PingModel());
+  void getCounters() {
+    sendMessage(PingModel());
+  }
+
+  @override
+  void unsubscribeCounters() {
+    sendMessage(PingModel());
   }
 
   @override
@@ -32,28 +52,52 @@ class AppRepository extends IAppRepository<PongModel> {
   }
 
   @override
-  final mapTypeToResponse = <String, JGBaseResponseModel Function(Map<String,dynamic>)>{
+  final mapTypeToResponse = <String, PongModel Function(Map<String,dynamic>)>{
     PingModel.responseType: (_) => PongModel.fromJson(),
   };
+
+  void dispose() {
+    http.dispose();
+  }
+
+  @override
+  void cacheCounter(int count) {
+    appState?.setCounter(count);
+  }
+
+  @override
+  int? getCachedCounter() {
+    return appState?.counter;
+  }
+
+}
+
+class MockHttp extends BaseRepository {
+
+  MockHttp() : super(onAuthTokenExpired: () async {
+    return "";
+  });
 
   @override
   void dispose() {}
 }
 
-abstract interface class IAppRepository<R extends JGBaseResponseModel> extends IRepository<R> {
+abstract interface class IAppRepository extends IRepository {
 
-  IAppRepository({super.ws});
+  void getCounters();
 
-  bool getCounters();
+  void unsubscribeCounters();
 
-  bool unsubscribeCounters();
-
-  void setCounter(int counter);
+  void setCounter(int count);
 
   int? getCounter();
+
+  void cacheCounter(int count);
+
+  int? getCachedCounter();
 }
 
-class MockSocket implements IWebSocket {
+class MockSocket extends IWebSocket {
 
   static final _mockSocketController = StreamController<Map<String, dynamic>>.broadcast();
 

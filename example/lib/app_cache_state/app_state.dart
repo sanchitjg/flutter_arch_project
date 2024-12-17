@@ -11,7 +11,7 @@ class AppState extends ICacheState<AppStateType> {
   }
 }
 
-abstract class AppStateType {}
+abstract class AppStateType extends IRepoModel {}
 
 class CounterStateChange extends AppStateType {
   final int counter;

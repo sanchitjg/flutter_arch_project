@@ -1,13 +1,15 @@
 part of flutter_arch_project;
 
-abstract class GenericModel {
+abstract class IRepoModel {}
+
+abstract class GenericSocketModel extends IRepoModel {
   final String? _type;
 
-  GenericModel._response(Map<String, dynamic> json) : _type = json['type'] as String?;
-  GenericModel._request(String? type) : _type = type;
+  GenericSocketModel._response(Map<String, dynamic> json) : _type = json['type'] as String?;
+  GenericSocketModel._request(String? type) : _type = type;
 }
 
-abstract class JGBaseRequestModel extends GenericModel {
+abstract class JGBaseRequestModel extends GenericSocketModel {
 
   static String? get responseType => null;
 
@@ -18,7 +20,7 @@ abstract class JGBaseRequestModel extends GenericModel {
   Map<String, dynamic> toJson() => {'type': _type, ...?mapJson};
 }
 
-abstract class JGBaseResponseModel extends GenericModel {
+abstract class JGBaseResponseModel extends GenericSocketModel {
 
   static String? get requestType => null;
 

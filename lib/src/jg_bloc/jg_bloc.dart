@@ -1,15 +1,5 @@
 part of flutter_arch_project;
 
-abstract class JGBlocEvent extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-abstract class JGBlocState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
 abstract class JGBloc<E extends JGBlocEvent, S extends JGBlocState> extends Bloc<E, S> {
 
   JGBloc(super.initialState){

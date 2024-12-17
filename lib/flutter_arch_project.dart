@@ -17,9 +17,20 @@ part 'src/icache_state.dart';
 part 'src/icontroller.dart';
 part 'src/iwebsocket.dart';
 part 'src/ihttp.dart';
+
 part 'src/models.dart';
-part 'src/irepository.dart';
-part 'src/view_model.dart';
+
+part 'src/irepository/irepository.dart';
+part 'src/irepository/data_sources_mixins/cache_state_mixin.dart';
+part 'src/irepository/data_sources_mixins/http_mixin.dart';
+part 'src/irepository/data_sources_mixins/local_store_mixin.dart';
+part 'src/irepository/data_sources_mixins/web_socket_mixin.dart';
+part 'src/irepository/data_sources_mixins/update_stream_mixin.dart';
+
+part 'src/jg_bloc/jg_bloc.dart';
+part 'src/jg_bloc/jg_bloc_state.dart';
+part 'src/jg_bloc/jg_bloc_event.dart';
+
 part 'src/jg_bloc_provider.dart';
 part 'src/jg_dependency_provider.dart';
 part 'src/jg_multi_provider.dart';

@@ -10,30 +10,19 @@ class AppController extends IController {
 
   StreamSubscription<AppStateType>? _counterCacheSub;
 
-  late final appState = cache<AppState>();
-  late final appRepo = repo<IAppRepository>();
+  @override
+  final IAppRepository repo;
 
-  AppController({super.repositories, super.caches}){
-
-    _counterCacheSub ??= appState?.subscribe((appStateChange){
-      switch(appStateChange) {
-        case CounterStateChange():
-          addEvent(SetCount(appState?.counter ?? 0));
-          break;
-        default:
-          break;
-      }
-    });
-
-    final value = appRepo?.getCounter();
+  AppController(this.repo){
+    final value = repo.getCounter();
     addEvent(SetCount(value ?? 0));
-    appState?.setCounter(value ?? 0);
-    appRepo?.getCounters();
+    repo.cacheCounter(value ?? 0);
+    repo.getCounters();
   }
 
   void incrementCounter() {
     addEvent(Increment());
-    appRepo?.setCounter(bloc<MyHomePageBodyVM>()?.state.counter ?? 0);
+    repo.setCounter(bloc<MyHomePageBodyVM>()?.state.counter ?? 0);
   }
 
   @override
@@ -44,11 +33,14 @@ class AppController extends IController {
   }
 
   @override
-  void onSocketData(JGBaseResponseModel message) {
+  void onUpdateModelReceive(IRepoModel message) {
     switch(message) {
       case PongModel():
         bloc<MyHomePageBodyVM>()?.add(SetCount(0));
-        appState?.setCounter(0);
+        repo.cacheCounter(0);
+        break;
+      case CounterStateChange():
+        addEvent(SetCount(repo.getCachedCounter() ?? 0));
         break;
       default:
         break;
@@ -62,7 +54,7 @@ class AppController extends IController {
         model.add(TitleEvent('${model.state.title}: Arch Project Example'));
         break;
       case MyHomePageBodyVM():
-        model.add(SetCount(appState?.counter ?? 0));
+        model.add(SetCount(repo.getCachedCounter() ?? 0));
         break;
       default:
         break;

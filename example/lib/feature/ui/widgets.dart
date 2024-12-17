@@ -1,8 +1,6 @@
 import 'package:example/app_cache_state/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_arch_project/flutter_arch_project.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart' as p;
 
 
 import '../state/a_repo.dart';
@@ -15,25 +13,21 @@ class MyAppState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return p.MultiProvider(
+    return JGMultiProvider(
       providers: [
-        p.Provider<AppState>(
+        JGDependencyProvider<AppState>(
           create: (context){
             return AppState();
           },
+          dispose: (_, cache) => cache.dispose(),
         ),
-        p.Provider<IAppRepository>(
-          create: (context){
-            return AppRepository(
-              ws: MockSocket(),
-            );
-          },
-        ),
-        p.Provider<AppController>(
+        JGDependencyProvider<AppController>(
           create: (context){
             return AppController(
-              repositories: {context.read<AppRepository>()},
-              caches: {context.read<AppState>()},
+              AppRepository(
+                ws: MockSocket(),
+                caches: {context.read<AppState>()},
+              ),
             );
           },
         ),
