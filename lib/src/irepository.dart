@@ -4,10 +4,13 @@ class _DefaultLocalStorage extends LocalStoreBase {}
 
 abstract class IRepository<M extends JGBaseResponseModel> extends BaseRepository {
   final IWebSocket? _ws;
+  final LocalStoreBase? ls;
 
   LocalStoreBase get localStore => _DefaultLocalStorage();
 
-  IRepository({IWebSocket? ws, super.onAuthTokenExpired}) : _ws = ws;
+  IRepository({IWebSocket? ws, IHttp? http, this.ls}) :
+        _ws = ws,
+        super(onAuthTokenExpired: http?.onAuthTokenExpired);
 
   Stream<M>? _stream() {
     return _ws

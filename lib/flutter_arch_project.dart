@@ -16,6 +16,7 @@ import 'package:rummy_building_blocks/rummy_building_blocks.dart';
 part 'src/icache_state.dart';
 part 'src/icontroller.dart';
 part 'src/iwebsocket.dart';
+part 'src/ihttp.dart';
 part 'src/models.dart';
 part 'src/irepository.dart';
 part 'src/view_model.dart';
