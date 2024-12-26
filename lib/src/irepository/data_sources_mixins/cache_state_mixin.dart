@@ -1,9 +1,9 @@
 part of '../../../flutter_arch_project.dart';
 
 mixin CacheStateMixin {
-  Map<Type, ICacheState<IRepoModel>> get caches;
+  Map<Type, ICacheState> get caches;
 
-  T? cache<T extends ICacheState<IRepoModel>>() {
+  T? cache<T extends ICacheState>() {
     return caches[T] as T?;
   }
 

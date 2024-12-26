@@ -1,15 +1,15 @@
 part of flutter_arch_project;
 
-abstract class ICacheState<T extends IRepoModel> {
+abstract class ICacheState extends IRepoModel {
 
-  final _cacheController = StreamController<T>.broadcast();
+  final _cacheController = StreamController<ICacheState>.broadcast();
 
-  Stream<T> _stream(){
+  Stream<ICacheState> _stream(){
     return _cacheController.stream;
   }
 
-  void notifyListeners(T cacheUpdateType){
-    _cacheController.add(cacheUpdateType);
+  void updateCache(){
+    _cacheController.add(this);
   }
 
   void dispose(){

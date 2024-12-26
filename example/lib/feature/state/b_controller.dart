@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:example/app_cache_state/app_state.dart';
 import 'package:example/feature/state/a_repo.dart';
 import 'package:flutter_arch_project/flutter_arch_project.dart';
@@ -7,8 +5,6 @@ import 'package:flutter_arch_project/flutter_arch_project.dart';
 import '../ui/view_models.dart';
 
 class AppController extends IController {
-
-  StreamSubscription<AppStateType>? _counterCacheSub;
 
   @override
   final IAppRepository repo;
@@ -26,21 +22,14 @@ class AppController extends IController {
   }
 
   @override
-  void dispose(){
-    _counterCacheSub?.cancel();
-    _counterCacheSub = null;
-    super.dispose();
-  }
-
-  @override
-  void onUpdateModelReceive(IRepoModel message) {
-    switch(message) {
+  void onUpdateModelReceive(IRepoModel model) {
+    switch(model) {
       case PongModel():
         bloc<MyHomePageBodyVM>()?.add(SetCount(0));
         repo.cacheCounter(0);
         break;
-      case CounterStateChange():
-        addEvent(SetCount(repo.getCachedCounter() ?? 0));
+      case AppState():
+        addEvent(SetCount(model.counter));
         break;
       default:
         break;

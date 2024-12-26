@@ -16,7 +16,7 @@ class AppRepository
   final IWebSocket ws;
 
   @override
-  final Map<Type, ICacheState<IRepoModel>> caches;
+  final Map<Type, ICacheState> caches;
 
   @override
   final http = MockHttp();
@@ -26,8 +26,8 @@ class AppRepository
 
   AppState? get appState => cache<AppState>();
 
-  AppRepository({required this.ws, Set<ICacheState<IRepoModel>>? caches})
-    : caches = caches?.toTypeMap() ?? Set<ICacheState<IRepoModel>>.identity().toTypeMap() {
+  AppRepository({required this.ws, Set<ICacheState>? caches})
+    : caches = caches?.toTypeMap() ?? Set<ICacheState>.identity().toTypeMap() {
     mergeStream({socketStream(), cacheStream()});
   }
 
