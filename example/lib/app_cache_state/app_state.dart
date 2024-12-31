@@ -9,4 +9,7 @@ class AppState extends ICacheState {
     _counter = value;
     updateCache();
   }
+
+  @override
+  List<Object?> get props => [_counter];
 }

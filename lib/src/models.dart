@@ -1,6 +1,6 @@
 part of flutter_arch_project;
 
-abstract class IRepoModel {}
+abstract class IRepoModel extends Equatable {}
 
 abstract class GenericSocketModel extends IRepoModel {
   final String? _type;
@@ -13,7 +13,7 @@ abstract class JGBaseRequestModel extends GenericSocketModel {
 
   static String? get responseType => null;
 
-  JGBaseRequestModel({String? type}) : super._request(type);
+  JGBaseRequestModel({required String type}) : super._request(type);
 
   Map<String, dynamic>? get mapJson => null;
 

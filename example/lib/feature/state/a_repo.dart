@@ -119,6 +119,9 @@ final class PingModel extends JGBaseRequestModel {
   static String get responseType => 'pong';
 
   PingModel() : super(type: 'ping');
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class PongModel extends JGBaseResponseModel {
@@ -126,4 +129,7 @@ final class PongModel extends JGBaseResponseModel {
   static String get requestType => 'ping';
 
   PongModel.fromJson() : super({'type': 'pong'});
+
+  @override
+  List<Object?> get props => [];
 }
