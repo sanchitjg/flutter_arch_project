@@ -10,7 +10,7 @@ class JGBlocProvider<P extends JGBloc> extends BlocProvider<P> {
   }) : super(
     create: (context){
       return context.read<IController>()
-          ._addBlocToController(create(context), key) as P;
+          ._addBlocToController<P>(create(context), key);
     },
   );
 

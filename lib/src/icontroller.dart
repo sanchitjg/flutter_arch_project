@@ -14,12 +14,12 @@ abstract class IController {
 
   final _changeListeners = <Function, StreamSubscription>{};
 
-  T _addBlocToController<T extends JGBloc>(JGBloc bloc, [Key? key]) {
+  T _addBlocToController<T extends JGBloc>(T bloc, [Key? key]) {
     onRegisterBlocWithController(bloc);
     if(key == null) {
-      return _blocs[T] = bloc as T;
+      return _blocs[T] = bloc;
     }
-    return (_blocLists[T] ??= {})[key] = bloc as T;
+    return (_blocLists[T] ??= {})[key] = bloc;
   }
 
   @protected
@@ -50,7 +50,7 @@ abstract class IController {
 
   @protected
   void attachListener<LM extends IRepoModel, C>(C Function(LM lm) converter, void Function(C change) handler) {
-    _changeListeners[handler] = repo._stream
+    _changeListeners[handler] ??= repo._stream
         .where((event) => event is LM)
         .cast<LM>()
         .map(converter)
