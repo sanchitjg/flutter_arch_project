@@ -60,7 +60,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return BlocProvider(
+    return JGBlocProvider<MyHomePageVM, AppController>(
       create: (context){
         return MyHomePageVM();
       },
@@ -73,7 +73,7 @@ class MyHomePage extends StatelessWidget {
             },
           ),
         ),
-        body: JGBlocProvider<MyHomePageBodyVM>(
+        body: JGBlocProvider<MyHomePageBodyVM, AppController>(
           create: (context) {
             return MyHomePageBodyVM();
           },

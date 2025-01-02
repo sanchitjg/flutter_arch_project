@@ -1,6 +1,7 @@
 part of flutter_arch_project;
 
-class JGBlocProvider<P extends JGBloc> extends BlocProvider<P> {
+//TODO: Casting to a specific type based on passed Generics
+class JGBlocProvider<P extends JGBloc, T extends IController> extends BlocProvider<P> {
 
   JGBlocProvider({
     super.key,
@@ -9,7 +10,7 @@ class JGBlocProvider<P extends JGBloc> extends BlocProvider<P> {
     super.lazy,
   }) : super(
     create: (context){
-      return context.read<IController>()
+      return context.read<T>()
           ._addBlocToController(create(context), key) as P;
     },
   );
