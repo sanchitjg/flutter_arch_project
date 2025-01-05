@@ -2,11 +2,15 @@ part of flutter_arch_project;
 
 abstract class IController {
 
+  IController() {
+    _socketSubscription = repo._stream
+        .listen(onUpdateModelReceive);
+  }
+
   @protected
   IRepository get repo;
 
-  late final StreamSubscription<IRepoModel> _socketSubscription = repo._stream
-      .listen(onUpdateModelReceive);
+  late final StreamSubscription<IRepoModel> _socketSubscription;
 
   final _blocs = <Type, JGBloc>{};
 

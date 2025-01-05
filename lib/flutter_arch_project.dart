@@ -2,12 +2,13 @@ library flutter_arch_project;
 
 export 'package:flutter_bloc/flutter_bloc.dart';
 export 'package:jg_network/network_main.dart';
+export 'package:flutter_arch_project/flutter_arch_project.dart';
 
 import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:jg_network/network_main.dart';
