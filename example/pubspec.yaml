@@ -42,7 +42,7 @@ dependencies:
     git:
       url: git@bitbucket.org:junglee_games/rummy_sdk.git
       path: rummy_building_blocks
-      ref: v1.0.21
+      ref: RGP-4087
 
 dev_dependencies:
   flutter_test:
