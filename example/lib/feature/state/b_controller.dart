@@ -29,7 +29,7 @@ class AppController extends IController {
         repo.cacheCounter(0);
         break;
       case AppState():
-        addEvent(SetCount(model.counter));
+        addEvent(SetCount(repo.getAppState().counter));
         break;
       default:
         break;

@@ -2,11 +2,11 @@ part of flutter_arch_project;
 
 abstract class IController {
 
-  @protected
-  IRepository get repo;
+  // @protected
+  // IRepository get repo;
 
-  late final StreamSubscription<IRepoModel> _socketSubscription = repo._stream
-      .listen(onUpdateModelReceive);
+  // late final StreamSubscription<IRepoModel> _socketSubscription = repo._stream
+  //     .listen(onUpdateModelReceive);
 
   final _blocs = <Type, JGBloc>{};
 
@@ -50,12 +50,12 @@ abstract class IController {
 
   @protected
   void attachListener<LM extends IRepoModel, C>(C Function(LM lm) converter, void Function(C change) handler) {
-    _changeListeners[handler] = repo._stream
-        .where((event) => event is LM)
-        .cast<LM>()
-        .map(converter)
-        .distinct()
-        .listen(handler);
+    // _changeListeners[handler] = repo._stream
+    //     .where((event) => event is LM)
+    //     .cast<LM>()
+    //     .map(converter)
+    //     .distinct()
+    //     .listen(handler);
   }
 
   @protected
@@ -64,15 +64,15 @@ abstract class IController {
     _changeListeners.remove(handler);
   }
 
-  @protected
-  void onUpdateModelReceive(IRepoModel model);
+  // @protected
+  // void onUpdateModelReceive(IRepoModel model);
 
   @protected
   void onRegisterBlocWithController(JGBloc bloc);
 
   @protected
   void dispose(){
-    _socketSubscription.cancel();
+    //_socketSubscription.cancel();
     _changeListeners.forEach((listener, sub) => sub.cancel());
     _changeListeners.clear();
   }

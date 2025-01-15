@@ -4,7 +4,7 @@ abstract class JGBloc<E extends JGBlocEvent, S extends JGBlocState> extends Bloc
 
   JGBloc(super.initialState){
     on<E>((event, emit) {
-      onEventStateChange(event).forEach(emit);
+      onEventStateChange(event).forEach(emit.call);
     });
   }
 

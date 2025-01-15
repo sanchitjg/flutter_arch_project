@@ -20,15 +20,18 @@ dependencies:
   flutter_bloc: 8.1.2
   equatable: 2.0.5
   jg_network:
-    git:
-      url: git@bitbucket.org:junglee_games/rummy_sdk.git
-      path: jg_network
-      ref: v1.0.19
+    path: ../rummy_sdk/jg_network
+#    git:
+#      url: git@bitbucket.org:junglee_games/rummy_sdk.git
+#      path: jg_network
+#      ref: v1.0.24
   rummy_building_blocks:
-    git:
-      url: git@bitbucket.org:junglee_games/rummy_sdk.git
-      path: rummy_building_blocks
-      ref: v1.0.21
+    path: ../rummy_sdk/rummy_building_blocks
+
+#    git:
+#      url: git@bitbucket.org:junglee_games/rummy_sdk.git
+#      path: rummy_building_blocks
+#      ref: v1.0.24
 
 dev_dependencies:
   flutter_test:

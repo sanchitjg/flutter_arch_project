@@ -7,5 +7,13 @@ class JGMultiProvider extends MultiRepositoryProvider {
     required super.providers,
     required super.child,
   });
+}
 
+class JGMultiBlocProvider extends MultiBlocProvider {
+
+  JGMultiBlocProvider({
+    super.key,
+    required super.providers,
+    required super.child,
+  });
 }

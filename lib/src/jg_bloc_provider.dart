@@ -14,5 +14,15 @@ class JGBlocProvider<P extends JGBloc, T extends IController> extends BlocProvid
           ._addBlocToController(create(context), key) as P;
     },
   );
+}
 
+//Use this for session/feature level data blocs, that can be shared between different modules.
+class JGDataBlocProvider<P extends JGBloc> extends BlocProvider<P> {
+
+  const JGDataBlocProvider({
+    super.key,
+    super.child,
+    required super.create,
+    super.lazy,
+  });
 }
