@@ -14,12 +14,14 @@ abstract class IController {
 
   final _changeListeners = <Function, StreamSubscription>{};
 
-  T _addBlocToController<T extends JGBloc>(JGBloc bloc, [Key? key]) {
+  T _addBlocToController<T extends JGBloc>(T bloc, [Key? key]) {
     onRegisterBlocWithController(bloc);
     if(key == null) {
-      return _blocs[T] = bloc as T;
+      _blocs[bloc.runtimeType] = bloc;
+
+      return bloc;
     }
-    return (_blocLists[T] ??= {})[key] = bloc as T;
+    return (_blocLists[T] ??= {})[key] = bloc;
   }
 
   @protected
