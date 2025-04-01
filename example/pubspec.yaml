@@ -45,6 +45,10 @@ dependencies:
 #      path: rummy_building_blocks
 #      ref: v1.0.24
 
+#dependency_overrides:
+#  rummy_building_blocks:
+#    path: ../../rummy_sdk/rummy_building_blocks
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

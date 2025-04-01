@@ -65,17 +65,7 @@ class AppRepository
 
 }
 
-class MockHttp extends HttpProvider {
-
-  MockHttp() : super(onAuthTokenExpired: () async {
-    return "";
-  });
-
-  @override
-  void dispose() {}
-}
-
-abstract interface class IAppRepository extends IRepository {
+abstract interface class IAppRepository {
 
   void getCounters();
 

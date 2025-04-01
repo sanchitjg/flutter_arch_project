@@ -14,6 +14,22 @@ class JGBlocProvider<P extends JGBloc, T extends IController> extends BlocProvid
           ._addBlocToController<P>(create(context), key);
     },
   );
+
+}
+
+class _JGBlocProviderUnsafe<P extends JGBloc> extends BlocProvider<P> {
+
+  _JGBlocProviderUnsafe({
+    super.key,
+    super.child,
+    required Create<P> create,
+  }) : super(
+    create: (context){
+      return context.read<IController>()
+          ._addBlocToController<P>(create(context), key);
+    },
+    lazy: false,
+  );
 }
 
 //Use this for session/feature level data blocs, that can be shared between different modules.
@@ -23,6 +39,5 @@ class JGDataBlocProvider<P extends JGBloc> extends BlocProvider<P> {
     super.key,
     super.child,
     required super.create,
-    super.lazy,
-  });
+  }) : super(lazy: false);
 }

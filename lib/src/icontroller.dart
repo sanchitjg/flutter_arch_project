@@ -1,18 +1,55 @@
 part of flutter_arch_project;
 
-abstract class IController {
+mixin WebSocketControlMixin<M extends JGBaseResponseModel> {
+  @protected
+  IWebSocketMixin<M> get repo;
 
-  // @protected
-  // IRepository get repo;
-
-  // late final StreamSubscription<IRepoModel> _socketSubscription = repo._stream
-  //     .listen(onUpdateModelReceive);
-
-  final _blocs = <Type, JGBloc>{};
-
-  final _blocLists = <Type, Map<Key, JGBloc>>{};
+  StreamSubscription<M>? _socketSubscription;
 
   final _changeListeners = <Function, StreamSubscription>{};
+
+  void initSocket() {
+    _socketSubscription ??= repo._stream
+        .listen(onUpdateModelReceive);
+  }
+
+  @protected
+  void onUpdateModelReceive(M model);
+
+  @protected
+  void attachListener<LM extends M, C>(C Function(LM lm) converter, void Function(C change) handler) {
+    _changeListeners[handler] = repo._stream
+        .where((event) => event is LM)
+        .cast<LM>()
+        .map(converter)
+        .distinct()
+        .listen(handler);
+  }
+
+  @protected
+  void detachListener<C>(void Function(C change) handler) {
+    _changeListeners[handler]?.cancel();
+    _changeListeners.remove(handler);
+  }
+
+  @mustCallSuper
+  void disposeSocket(){
+    _changeListeners.forEach((listener, sub) => sub.cancel());
+    _changeListeners.clear();
+    _socketSubscription?.cancel();
+    _socketSubscription = null;
+  }
+}
+
+abstract class IController {
+  IController([Set<JGBloc>? dataBlocs]) :
+        _blocs = dataBlocs?.toList().asMap()
+            .map((key, value) => MapEntry(value.runtimeType, value))
+            ?? <Type, JGBloc>{};
+
+  final Map<Type, JGBloc> _blocs;
+
+  final _blocLists = <Type, Map<Key, JGBloc>>{};
 
   T _addBlocToController<T extends JGBloc>(T bloc, [Key? key]) {
     onRegisterBlocWithController(bloc);
@@ -51,31 +88,8 @@ abstract class IController {
   }
 
   @protected
-  void attachListener<LM extends IRepoModel, C>(C Function(LM lm) converter, void Function(C change) handler) {
-    // _changeListeners[handler] = repo._stream
-    //     .where((event) => event is LM)
-    //     .cast<LM>()
-    //     .map(converter)
-    //     .distinct()
-    //     .listen(handler);
-  }
+  void onRegisterBlocWithController(JGBloc bloc){}
 
-  @protected
-  void detachListener<C>(void Function(C change) handler) {
-    _changeListeners[handler]?.cancel();
-    _changeListeners.remove(handler);
-  }
+  void dispose() {}
 
-  // @protected
-  // void onUpdateModelReceive(IRepoModel model);
-
-  @protected
-  void onRegisterBlocWithController(JGBloc bloc);
-
-  @protected
-  void dispose(){
-    //_socketSubscription.cancel();
-    _changeListeners.forEach((listener, sub) => sub.cancel());
-    _changeListeners.clear();
-  }
 }

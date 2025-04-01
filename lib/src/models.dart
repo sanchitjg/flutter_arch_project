@@ -17,7 +17,7 @@ abstract class JGBaseRequestModel extends GenericSocketModel {
 
   Map<String, dynamic>? get mapJson => null;
 
-  Map<String, dynamic> toJson() => {'type': _type, ...?mapJson};
+  Map<String, dynamic> _toJson() => {'type': _type, ...?mapJson};
 }
 
 abstract class JGBaseResponseModel extends GenericSocketModel {
