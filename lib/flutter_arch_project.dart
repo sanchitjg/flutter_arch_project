@@ -7,7 +7,6 @@ library flutter_arch_project;
 /// Exporting the `flutter_bloc` package to provide BLoC (Business Logic Component)
 /// functionality for state management.
 export 'package:flutter_bloc/flutter_bloc.dart';
-// export 'package:jg_network/network_main.dart' show HttpProvider; // Uncomment if HttpProvider is needed.
 
 import 'dart:async'; // Provides support for asynchronous programming.
 
