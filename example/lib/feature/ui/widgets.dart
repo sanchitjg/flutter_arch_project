@@ -15,19 +15,21 @@ class MyAppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return JGMultiProvider(
       providers: [
-        JGDependencyProvider<AppState>(
-          create: (context){
-            return AppState();
+        JGDataBlocProvider<AppDataBloc>(
+          create: (context) => AppDataBloc(AppState()),
+        ),
+        JGDependencyProvider(
+          create: (context) {
+            return AppRepository(
+              ws: MockSocket(),
+              appState: context.read<AppDataBloc>().state,
+            );
           },
-          dispose: (_, cache) => cache.dispose(),
         ),
         JGDependencyProvider<AppController>(
           create: (context){
             return AppController(
-              AppRepository(
-                ws: MockSocket(),
-                caches: {context.read<AppState>()},
-              ),
+              context.read<AppRepository>(),
             );
           },
         ),

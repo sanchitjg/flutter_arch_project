@@ -7,29 +7,16 @@ import '../../app_local_store/app_local_store.dart';
 
 class AppRepository
     extends IAppRepository
-    with WebSocketMixin<PongModel>,
-        CacheStateMixin,
-        LocalStoreMixin,
-        HttpMixin {
+    with WebSocketMixin<PongModel> {
 
   @override
   final IWebSocket ws;
 
-  @override
-  final Map<Type, ICacheState> caches;
+  //final localStore = AppLocalStore();
 
-  @override
-  final http = MockHttp();
+  AppState appState;
 
-  @override
-  final localStore = AppLocalStore();
-
-  AppState? get appState => cache<AppState>();
-
-  AppRepository({required this.ws, Set<ICacheState>? caches})
-    : caches = caches?.toTypeMap() ?? Set<ICacheState>.identity().toTypeMap() {
-    mergeStream({socketStream(), cacheStream()});
-  }
+  AppRepository({required this.ws, required this.appState});
 
   @override
   void getCounters() {
@@ -43,12 +30,13 @@ class AppRepository
 
   @override
   void setCounter(int count) {
-    localStore.saveInt('counter', count);
+    //localStore.saveInt('counter', count);
   }
 
   @override
   int? getCounter() {
-    return localStore.getInt('counter');
+    //return localStore.getInt('counter');
+    return null;
   }
 
   @override
@@ -57,32 +45,27 @@ class AppRepository
   };
 
   void dispose() {
-    http.dispose();
   }
 
   @override
   void cacheCounter(int count) {
-    appState?.setCounter(count);
+    //appState?.setCounter(count);
   }
 
   @override
   int? getCachedCounter() {
-    return appState?.counter;
+    return 0;
+    //return appState?.counter;
+  }
+
+  @override
+  AppState getAppState() {
+    return appState;
   }
 
 }
 
-class MockHttp extends BaseRepository {
-
-  MockHttp() : super(onAuthTokenExpired: () async {
-    return "";
-  });
-
-  @override
-  void dispose() {}
-}
-
-abstract interface class IAppRepository extends IRepository {
+abstract interface class IAppRepository {
 
   void getCounters();
 
@@ -95,6 +78,8 @@ abstract interface class IAppRepository extends IRepository {
   void cacheCounter(int count);
 
   int? getCachedCounter();
+
+  AppState getAppState();
 }
 
 class MockSocket extends IWebSocket {

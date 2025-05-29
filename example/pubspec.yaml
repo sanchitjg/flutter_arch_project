@@ -39,10 +39,15 @@ dependencies:
   flutter_arch_project:
     path: ../
   rummy_building_blocks:
-    git:
-      url: git@bitbucket.org:junglee_games/rummy_sdk.git
-      path: rummy_building_blocks
-      ref: v1.0.21
+    path: ../../rummy_sdk/rummy_building_blocks
+#    git:
+#      url: git@bitbucket.org:junglee_games/rummy_sdk.git
+#      path: rummy_building_blocks
+#      ref: v1.0.24
+
+#dependency_overrides:
+#  rummy_building_blocks:
+#    path: ../../rummy_sdk/rummy_building_blocks
 
 dev_dependencies:
   flutter_test:
