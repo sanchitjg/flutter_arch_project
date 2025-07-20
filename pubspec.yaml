@@ -2,7 +2,7 @@ name: flutter_arch_project
 description: "A new Flutter project."
 version: 0.0.1
 publish_to: none
-homepage: "www.abc.com"
+homepage: "www.abc2.com"
 
 environment:
   sdk: ^3.5.0
