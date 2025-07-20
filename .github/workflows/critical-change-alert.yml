@@ -34,10 +34,12 @@ jobs:
       - name: Check for Critical Files
         id: check_critical
         run: |
-          CRITICAL_PATHS=("src/secret_config" ".env" "deploy/production.yml")
+          mapfile -t CRITICAL_PATHS < .github/critical-paths.txt
+          mapfile -t CHANGED_FILES <<< "${{ steps.changes.outputs.changed_files }}"
+
           MATCHED_FILES=()
 
-          for file in ${{ steps.changes.outputs.changed_files }}; do
+          for file in "${CHANGED_FILES[@]}"; do
             for critical in "${CRITICAL_PATHS[@]}"; do
               if [[ "$file" == "$critical"* ]]; then
                 MATCHED_FILES+=("$file")
@@ -47,8 +49,8 @@ jobs:
 
           if [ ${#MATCHED_FILES[@]} -gt 0 ]; then
             echo "critical_changes=true" >> $GITHUB_OUTPUT
-            echo "Matched Critical Files: ${MATCHED_FILES[@]}"
-            echo "files=$(printf '%s\n' "${MATCHED_FILES[@]}")" >> $GITHUB_OUTPUT
+            printf '%s\n' "${MATCHED_FILES[@]}" >> matched_files.txt
+            echo "files=$(cat matched_files.txt)" >> $GITHUB_OUTPUT
           else
             echo "critical_changes=false" >> $GITHUB_OUTPUT
           fi
