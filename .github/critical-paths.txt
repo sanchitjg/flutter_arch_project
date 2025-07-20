@@ -1,0 +1,3 @@
+lib/src/
+lib/flutter_arch_project.dart
+pubspec.yaml

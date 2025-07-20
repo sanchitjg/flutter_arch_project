@@ -1,0 +1,72 @@
+name: Alert on Critical File Changes
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - '**'
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for accurate diffing
+
+      - name: Get Changed Files
+        id: changes
+        run: |
+          echo "::group::Detecting Changed Files"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin ${{ github.base_ref }}
+            git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          else
+            git diff --name-only ${{ github.sha }}^ ${{ github.sha }} > changed_files.txt
+          fi
+          echo "Changed files:"
+          cat changed_files.txt
+          echo "::endgroup::"
+          echo "changed_files=$(cat changed_files.txt | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - name: Check for Critical Files
+        id: check_critical
+        run: |
+          mapfile -t CRITICAL_PATHS < .github/critical-paths.txt
+          mapfile -t CHANGED_FILES <<< "${{ steps.changes.outputs.changed_files }}"
+
+          MATCHED_FILES=()
+
+          for file in "${CHANGED_FILES[@]}"; do
+            for critical in "${CRITICAL_PATHS[@]}"; do
+              if [[ "$file" == "$critical"* ]]; then
+                MATCHED_FILES+=("$file")
+              fi
+            done
+          done
+
+          if [ ${#MATCHED_FILES[@]} -gt 0 ]; then
+            echo "critical_changes=true" >> $GITHUB_OUTPUT
+            printf '%s\n' "${MATCHED_FILES[@]}" >> matched_files.txt
+            echo "files=$(cat matched_files.txt)" >> $GITHUB_OUTPUT
+          else
+            echo "critical_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack Alert
+        if: steps.check_critical.outputs.critical_changes == 'true'
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "*⚠️ Critical Files Changed!*",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Critical files were modified in a commit or PR.*\nRepo: '${{ github.repository }}'\nAuthor: '${{ github.actor }}'\nLink: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}\n\nFiles:\n```${{ steps.check_critical.outputs.files }}```"
+                }
+              }
+            ]
+          }' ${{ secrets.TEST_REPO_ALERT }}
